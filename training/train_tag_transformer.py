@@ -67,14 +67,14 @@ def train_tag_transformer():
     for epoch in range(cfg.train.epochs):
         # 训练阶段
         loss = trainer.train_epoch(train_loader)
-        print(f"Epoch {epoch+1} Train Loss: {loss:.4f}")
+        print(f"Epoch {epoch+1} Train Loss: Critetion = {loss["critetion_loss"]:.4f}, Contrastive = {loss["contrastive_loss"]:.4f}")
 
         # 验证阶段
         evaluate_data = evaluator.evaluate(val_loader)
         val_loss = evaluate_data["loss"]
         top1_acc = evaluate_data["top1_acc"]
         top5_acc = evaluate_data["top5_acc"]
-        print(f"Epoch {epoch+1} Val Loss: {val_loss:.4f}, Top 1 Acc: {top1_acc:.4f}, Top 5 Acc: {top5_acc:.4f}")
+        print(f"Epoch {epoch+1} Val Critetion Loss: {val_loss:.4f}, Top 1 Acc: {top1_acc:.4f}, Top 5 Acc: {top5_acc:.4f}")
 
         # 测试预测可视化
         print(f"\n--- Epoch {epoch+1} Specific Tag Prediction Test ---")

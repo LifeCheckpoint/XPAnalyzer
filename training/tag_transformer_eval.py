@@ -25,7 +25,7 @@ class TagTransformerEvaluator:
                 targets = batch['target_ids'].to(self.device)
                 mask = batch['attention_mask'].to(self.device)
 
-                logits, _ = self.model(inputs, mask)
+                logits = self.model(inputs, mask)["logits"]
                 loss = self.criterion(logits.view(-1, len(self.vocab)), targets.view(-1))
                 total_loss += loss.item()
 
@@ -52,5 +52,5 @@ class TagTransformerEvaluator:
     def get_embeddings(self, inputs, attention_mask):
         self.model.eval()
         with torch.no_grad():
-            _, embeddings = self.model(inputs, attention_mask)
+            embeddings = self.model(inputs, attention_mask)["encoded"]
         return embeddings

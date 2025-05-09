@@ -65,7 +65,7 @@ class TagPredictor:
     def _model_forward(self, inputs):
         """推理"""
         with torch.no_grad():
-            logits, _ = self.model(inputs['input_ids'], inputs['attention_mask'])
+            logits = self.model(inputs['input_ids'], inputs['attention_mask'])["logits"]
         return logits
 
     def _process_outputs(self, logits, batch_data, top_k):

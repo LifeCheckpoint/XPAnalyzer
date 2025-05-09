@@ -54,7 +54,7 @@ class TagTransformerOcclusionAnalyzer:
         token_ids = [self.vocab['[CLS]']] + [self.vocab.get(tag, self.vocab['[UNK]']) for tag in input_tags]
         
         with torch.no_grad():
-            logits, _ = self.model(*self._prepare_inputs([token_ids]))
+            logits = self.model(*self._prepare_inputs([token_ids]))["logits"]
         
         # softmax 概率归一化输出
         probs = torch.softmax(logits[0, :len(token_ids)], dim=-1)
@@ -97,7 +97,7 @@ class TagTransformerOcclusionAnalyzer:
                 
                 # 获取遮挡后概率
                 with torch.no_grad():
-                    logits, _ = self.model(*self._prepare_inputs([occluded_tokens]))
+                    logits = self.model(*self._prepare_inputs([occluded_tokens]))["logits"]
                 occluded_probs = torch.softmax(logits[0, :len(occluded_tokens)], dim=-1)[:, target_id]
                 
                 # 计算影响值

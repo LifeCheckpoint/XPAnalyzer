@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 class BaseInfoConfig(BaseModel):
     # 基本配置参数
-    experiment_name: str = "20250509d"
+    experiment_name: str = "20250509e"
     seed: int = 114514
     device: str = "cuda"
 
@@ -20,14 +20,17 @@ class DatasetConfig(BaseInfoConfig):
 
 class TrainConfig(BaseInfoConfig):
     # 训练配置参数
-    mask_prob: float = 0.10
-    batch_size: int = 768
-    learning_rate: float = 8e-5
-    epochs: int = 150
-    save_interval: int = 30
+    batch_size: int = 512
+    learning_rate: float = 1e-4
+    epochs: int = 200
+    save_interval: int = 50
     save_dir: str = f"./saves/{BaseInfoConfig().experiment_name}"
-
     eval_size: float = 0.1
+
+    mask_prob: float = 0.10
+    contrastive_temperature: float = 0.15
+    mask_predict_loss_weight: float = 1
+    contrastive_loss_weight: float = 0.2
 
 class EvaluateConfig(BaseInfoConfig):
     # 评估配置参数
@@ -53,5 +56,6 @@ class ExperimentConfig(BaseInfoConfig):
     test: TestConfig = TestConfig()
 
 """
-
+Epoch 200 Train Loss: Critetion = 0.5853, Contrastive = 0.1089
+Epoch 200 Val Critetion Loss: 0.7966, Top 1 Acc: 0.8727, Top 5 Acc: 0.9006
 """

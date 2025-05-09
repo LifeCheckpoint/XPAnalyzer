@@ -53,7 +53,7 @@ def test_tag_transformer_tsne():
     with torch.no_grad():
         embeddings = []
         for batch in collated_batches:
-            _, embedding = predictor.model(batch['input_ids'], batch['attention_mask'])
+            embedding = predictor.model(batch['input_ids'], batch['attention_mask'])["encoded"]
             embeddings.append(embedding.cpu())
         embeddings = torch.cat(embeddings, dim=0)
         embeddings = torch.reshape(embeddings, (-1, cfg.model.embed_dim))
