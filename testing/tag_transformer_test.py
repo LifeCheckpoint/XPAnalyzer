@@ -1,4 +1,4 @@
-from configs import TestConfig
+from config.configs import TestConfig
 import torch
 from model.tag_transformer import TagTransformer
 from utils.tag_transformer_predictor import TagPredictor

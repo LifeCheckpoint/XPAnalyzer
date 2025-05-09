@@ -1,4 +1,4 @@
-from configs import ModelConfig
+from config.configs import ModelConfig
 import torch.nn as nn
 
 modelCFG = ModelConfig()

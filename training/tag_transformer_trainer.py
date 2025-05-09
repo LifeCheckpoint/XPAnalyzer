@@ -1,4 +1,4 @@
-from configs import TrainConfig
+from config.configs import TrainConfig
 from torch import nn, optim
 
 TrainCFG = TrainConfig()

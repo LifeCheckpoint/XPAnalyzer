@@ -1,4 +1,4 @@
-from configs import EvaluateConfig
+from config.configs import EvaluateConfig
 from data.tag_dataset import collate_fn
 from typing import List, Dict, Tuple
 import itertools

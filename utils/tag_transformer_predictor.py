@@ -1,12 +1,12 @@
-from configs import EvaluateConfig
+from config.configs import TestConfig
 import torch
 from data.tag_dataset import collate_fn
 
-testCFG = EvaluateConfig()
+testCFG = TestConfig()
 
 class TagPredictor:
     def __init__(self, model, vocab, device=testCFG.device):
-        self.model = model.to(device).eval()  # 强制设为eval模式
+        self.model = model.to(device).eval()
         self.vocab = vocab
         self.device = device
         self.id_to_vocab = {idx: token for token, idx in vocab.items()}
@@ -14,6 +14,8 @@ class TagPredictor:
     def predict(self, input_tags_batch, top_k=10):
         """
         ## 预测标签 Top K 信息
+
+        input_tags_batch: List[List[str]]，不需要包含 [CLS]
 
         返回格式
 
@@ -34,12 +36,12 @@ class TagPredictor:
         ```
         """
 
-        batch_data = self._prepare_batch(input_tags_batch)
-        padded_input = self._collate_batch(batch_data)
+        batch_data = self.prepare_batch(input_tags_batch)
+        padded_input = self.collate_batch(batch_data)
         logits = self._model_forward(padded_input)
         return self._process_outputs(logits, batch_data, top_k)
 
-    def _prepare_batch(self, input_tags_batch):
+    def prepare_batch(self, input_tags_batch):
         """将原始输入转换为token IDs"""
         return [
             {
@@ -55,7 +57,7 @@ class TagPredictor:
             for tags in input_tags_batch
         ]
 
-    def _collate_batch(self, batch_data):
+    def collate_batch(self, batch_data):
         """数据长度对齐"""
         padded = collate_fn(batch_data, pad_token_id=self.vocab['[PAD]'])
         return {k: v.to(self.device) for k, v in padded.items()}

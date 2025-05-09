@@ -1,4 +1,4 @@
-from configs import EvaluateConfig
+from config.configs import EvaluateConfig
 import torch
 from torch import nn
 

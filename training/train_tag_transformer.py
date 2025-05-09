@@ -1,4 +1,4 @@
-from configs import ModelConfig, TrainConfig, EvaluateConfig
+from config.configs import ModelConfig, TrainConfig, EvaluateConfig
 import torch
 from pathlib import Path
 from torch.utils.data import DataLoader
@@ -8,7 +8,7 @@ from data.tag_prepocessing import load_character_tags
 from data.tag_dataset import TagDataset, collate_fn
 from model.tag_transformer import TagTransformer
 from training.tag_transformer_trainer import TagTransformerTrainer
-from utils.tag_transformer_eval import TagTransformerEvaluator
+from training.tag_transformer_eval import TagTransformerEvaluator
 from utils.tag_transformer_predictor import TagPredictor
 
 modelCFG = ModelConfig()
@@ -99,7 +99,7 @@ def train_tag_transformer():
 
         if (epoch + 1) % trainCFG.save_interval == 0:
             # 保存模型
-            path = Path(trainCFG.save_path) / trainCFG.experiment_name /  f"{modelCFG.model_name}_epoch_{epoch+1}.pth"
+            path = Path(trainCFG.save_dir) / f"{modelCFG.model_name}_epoch_{epoch+1}.pth"
             path.parent.mkdir(parents=True, exist_ok=True)
             torch.save({
                 'model_state_dict': model.state_dict(),
