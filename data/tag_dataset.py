@@ -1,12 +1,12 @@
-from config.configs import TrainConfig
+from config.configs import ExperimentConfig
 import torch
 from torch.utils.data import Dataset
 import numpy as np
 
-trainCFG = TrainConfig()
+cfg = ExperimentConfig()
 
 class TagDataset(Dataset):
-    def __init__(self, data, vocab, mask_prob=trainCFG.mask_prob):
+    def __init__(self, data, vocab, mask_prob=cfg.train.mask_prob):
         self.vocab = vocab
         self.unk_token_id = vocab['[UNK]']
         self.mask_token_id = vocab['[MASK]']

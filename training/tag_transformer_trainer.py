@@ -1,15 +1,15 @@
-from config.configs import TrainConfig
+from config.configs import ExperimentConfig
 from torch import nn, optim
 
-TrainCFG = TrainConfig()
+cfg = ExperimentConfig()
 
 class TagTransformerTrainer:
-    def __init__(self, model, vocab, device=TrainCFG.device):
+    def __init__(self, model, vocab, device=cfg.device):
         self.model = model.to(device)
         self.vocab = vocab
         self.device = device
         self.criterion = nn.CrossEntropyLoss(ignore_index=vocab['[PAD]'])
-        self.optimizer = optim.AdamW(model.parameters(), lr=TrainCFG.learning_rate)
+        self.optimizer = optim.AdamW(model.parameters(), lr=cfg.train.learning_rate)
 
     def train_epoch(self, dataloader):
         self.model.train()

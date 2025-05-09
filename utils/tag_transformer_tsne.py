@@ -1,5 +1,5 @@
 from collections import Counter
-from config.configs import TestConfig, ModelConfig
+from config.configs import ExperimentConfig
 from data.tag_prepocessing import load_character_tags
 from model.tag_transformer import TagTransformer
 from pathlib import Path
@@ -11,8 +11,7 @@ import seaborn as sns
 import torch
 import torch
 
-testCFG = TestConfig()
-modelCFG = ModelConfig()
+cfg = ExperimentConfig()
 
 plt.rcParams["font.sans-serif"] = ["Microsoft YaHei", "SimHei"]
 plt.rcParams["axes.unicode_minus"] = False
@@ -26,13 +25,13 @@ def test_tag_transformer_tsne():
     """词嵌入可视化"""
 
     # 加载原始标签映射表统计标签频率
-    tags_dict = load_character_tags(testCFG.characters_tags_dataset_path)
+    tags_dict = load_character_tags(cfg.dataset.characters_tags_dataset_path)
     tag_counts = Counter()
     for tags in tags_dict.values():
         tag_counts.update(tags)
 
     # 初始化模型等
-    model_datas = torch.load(testCFG.model_tag_transformer_path)
+    model_datas = torch.load(cfg.test.model_tag_transformer_path)
     vocab = model_datas["vocab"]
     model = TagTransformer(len(vocab))
     model.load_state_dict(model_datas["model_state_dict"])
@@ -46,7 +45,7 @@ def test_tag_transformer_tsne():
     # 打包成 batches
     vocab_list = list(vocab.keys())
     batches = prepare_batch(predictor, [[tag] for tag in vocab_list])
-    betches_gen = split_list(batches, testCFG.batch_size)
+    betches_gen = split_list(batches, cfg.test.batch_size)
     collated_batches = []
     for batch in betches_gen:
         collated_batches.append(predictor.collate_batch(batch))
@@ -57,16 +56,16 @@ def test_tag_transformer_tsne():
             _, embedding = predictor.model(batch['input_ids'], batch['attention_mask'])
             embeddings.append(embedding.cpu())
         embeddings = torch.cat(embeddings, dim=0)
-        embeddings = torch.reshape(embeddings, (-1, modelCFG.embed_dim))
+        embeddings = torch.reshape(embeddings, (-1, cfg.model.embed_dim))
 
     print(f"Embeddings shape: {embeddings.shape}")
 
     # 选取频率最高的前 N 个词汇
-    print(f"Selecting top {testCFG.tsne_visual_num_words} most frequent words")
+    print(f"Selecting top {cfg.test.tsne_visual_num_words} most frequent words")
     sorted_tags_by_freq = sorted(tag_counts.items(), key=lambda item: item[1], reverse=True)
 
     # 选取前 N 个词汇及其频率
-    top_tags_freq = sorted_tags_by_freq[:testCFG.tsne_visual_num_words]
+    top_tags_freq = sorted_tags_by_freq[:cfg.test.tsne_visual_num_words]
     top_tags = [tag for tag, freq in top_tags_freq]
     top_freqs = [freq for tag, freq in top_tags_freq]
 
@@ -80,9 +79,9 @@ def test_tag_transformer_tsne():
     print("Performing t-SNE dimensionality reduction")
     tsne = TSNE(
         n_components=2,
-        random_state=testCFG.seed,
-        perplexity=testCFG.tsne_perplexity,
-        n_iter=testCFG.tsne_n_iter,
+        random_state=cfg.seed,
+        perplexity=cfg.test.tsne_perplexity,
+        n_iter=cfg.test.tsne_n_iter,
         init="random",
         learning_rate="auto"
     )
@@ -138,7 +137,7 @@ def test_tag_transformer_tsne():
 
     plt.tight_layout(rect=[0, 0, 1, 1])
 
-    output_filename = Path(testCFG.tsne_image_output_dir) / f"word_embeddings_tsne_top{len(top_tags)}_freq.png"
+    output_filename = Path(cfg.test.tsne_image_output_dir) / f"word_embeddings_tsne_top{len(top_tags)}_freq.png"
     plt.savefig(str(output_filename), dpi=300)
     print(f"Visualization saved to {output_filename}")
 

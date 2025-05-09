@@ -1,11 +1,11 @@
-from config.configs import EvaluateConfig
+from config.configs import ExperimentConfig
 import torch
 from torch import nn
 
-testCFG = EvaluateConfig()
+cfg = ExperimentConfig()
 
 class TagTransformerEvaluator:
-    def __init__(self, model, vocab, device=testCFG.device):
+    def __init__(self, model, vocab, device=cfg.device):
         self.model = model.to(device)
         self.vocab = vocab
         self.device = device

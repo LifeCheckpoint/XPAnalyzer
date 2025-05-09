@@ -1,13 +1,13 @@
-from config.configs import EvaluateConfig
+from config.configs import ExperimentConfig
 from data.tag_dataset import collate_fn
 from typing import List, Dict, Tuple
 import itertools
 import torch
 
-testCFG = EvaluateConfig()
+cfg = ExperimentConfig()
 
 class TagTransformerOcclusionAnalyzer:
-    def __init__(self, model, vocab, device=testCFG.device):
+    def __init__(self, model, vocab, device=cfg.device):
         self.model = model.to(device).eval()
         self.vocab = vocab
         self.device = device

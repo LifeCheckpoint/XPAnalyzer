@@ -1,16 +1,16 @@
-from config.configs import ModelConfig
+from config.configs import ExperimentConfig
 import torch.nn as nn
 
-modelCFG = ModelConfig()
+cfg = ExperimentConfig()
 
 class TagTransformer(nn.Module):
     def __init__(
             self,
             vocab_size,
-            embed_dim=modelCFG.embed_dim,
-            num_layers=modelCFG.num_layers,
-            num_heads=modelCFG.num_heads,
-            dim_feedforward=modelCFG.dim_feedforward
+            embed_dim=cfg.model.embed_dim,
+            num_layers=cfg.model.num_layers,
+            num_heads=cfg.model.num_heads,
+            dim_feedforward=cfg.model.dim_feedforward
         ):
 
         super().__init__()

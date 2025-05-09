@@ -1,11 +1,11 @@
-from config.configs import TestConfig
+from config.configs import ExperimentConfig
 import torch
 from data.tag_dataset import collate_fn
 
-testCFG = TestConfig()
+cfg = ExperimentConfig()
 
 class TagPredictor:
-    def __init__(self, model, vocab, device=testCFG.device):
+    def __init__(self, model, vocab, device=cfg.device):
         self.model = model.to(device).eval()
         self.vocab = vocab
         self.device = device

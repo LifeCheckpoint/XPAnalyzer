@@ -1,15 +1,15 @@
-from config.configs import TestConfig
+from config.configs import ExperimentConfig
 import torch
 from model.tag_transformer import TagTransformer
 from utils.tag_transformer_predictor import TagPredictor
 from utils.tag_transformer_occlusion import TagTransformerOcclusionAnalyzer
 
-testCFG = TestConfig()
+cfg = ExperimentConfig()
 
 def test_tag_transformer_mask_predict():
     # tag MASK 预测测试
 
-    model_datas = torch.load(testCFG.model_tag_transformer_path)
+    model_datas = torch.load(cfg.test.model_tag_transformer_path)
     vocab = model_datas['vocab']
     model = TagTransformer(len(vocab))
     model.load_state_dict(model_datas['model_state_dict'])
@@ -24,7 +24,7 @@ def test_tag_transformer_mask_predict():
     ]
 
     # 获取预测结果（结构为List[List[List[Dict]]]）
-    predict_results = predictor.predict(test_input_tags, top_k=testCFG.top_k)
+    predict_results = predictor.predict(test_input_tags, top_k=cfg.test.top_k)
     
     # 遍历每个测试样本
     for sample_idx, (input_tags, preds_per_seq) in enumerate(zip(test_input_tags, predict_results)):
@@ -34,14 +34,14 @@ def test_tag_transformer_mask_predict():
         # 跳过[CLS]位置（preds_per_seq[0]），从第一个实际标签开始
         for tag, pos_preds in zip(input_tags, preds_per_seq[1:]):
             # 提取top_k的token列表
-            top_tokens = [pred['token'] for pred in pos_preds[:testCFG.top_k]]
+            top_tokens = [pred['token'] for pred in pos_preds[:cfg.test.top_k]]
             print(f"({tag}): {top_tokens}")
 
 
 def test_tag_transformer_occlusion():
     # 遮挡分析测试
 
-    model_datas = torch.load(testCFG.model_tag_transformer_path)
+    model_datas = torch.load(cfg.test.model_tag_transformer_path)
     vocab = model_datas['vocab']
     model = TagTransformer(len(vocab))
     model.load_state_dict(model_datas['model_state_dict'])
