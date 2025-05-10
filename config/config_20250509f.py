@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 class BaseInfoConfig(BaseModel):
     # 基本配置参数
-    experiment_name: str = "20250509e"
+    experiment_name: str = "20250509f"
     seed: int = 114514
     device: str = "cuda"
 
@@ -17,12 +17,13 @@ class ModelConfig(BaseInfoConfig):
 class DatasetConfig(BaseInfoConfig):
     # 数据集配置参数
     characters_tags_dataset_path: str = "E:/Dataset/bangumi/data_min.json"
+    tag_freq_threshold: int = 3
 
 class TrainConfig(BaseInfoConfig):
     # 训练配置参数
     batch_size: int = 512
     learning_rate: float = 1e-4
-    epochs: int = 200
+    epochs: int = 100
     save_interval: int = 50
     save_dir: str = f"./saves/{BaseInfoConfig().experiment_name}"
     eval_size: float = 0.1
@@ -41,7 +42,7 @@ class TestConfig(BaseInfoConfig):
     # 测试配置参数
     batch_size: int = 512
     top_k: int = 10
-    model_tag_transformer_path: str = f"./saves/{BaseInfoConfig().experiment_name}/{ModelConfig().model_name}_epoch_200.pth"
+    model_tag_transformer_path: str = f"./saves/{BaseInfoConfig().experiment_name}/{ModelConfig().model_name}_epoch_100.pth"
     tsne_visual_num_words: int = 100
     tsne_n_iter: int = 500
     tsne_perplexity: int = 20
@@ -56,6 +57,6 @@ class ExperimentConfig(BaseInfoConfig):
     test: TestConfig = TestConfig()
 
 """
-Epoch 200 Train Loss: Critetion = 0.5853, Contrastive = 0.1089
-Epoch 200 Val Critetion Loss: 0.7966, Top 1 Acc: 0.8727, Top 5 Acc: 0.9006
+Epoch 100 Train Loss: Critetion = 0.6527, Contrastive = 0.1094
+Epoch 100 Val Critetion Loss: 0.7344, Top 1 Acc: 0.8772, Top 5 Acc: 0.9049
 """

@@ -1,8 +1,11 @@
 from config.configs import ExperimentConfig
 import torch
+import pickle
+import matplotlib.pyplot as plt
 from model.tag_transformer import TagTransformer
 from utils.tag_transformer_predictor import TagPredictor
 from utils.tag_transformer_occlusion import TagTransformerOcclusionAnalyzer
+from utils.tag_transformer_emb_dist import TagTransformerEmbeddingDistance
 
 cfg = ExperimentConfig()
 
@@ -20,7 +23,10 @@ def test_tag_transformer_mask_predict():
     # 定义用于测试可视化的输入标签
     test_input_tags = [
         ["傲娇", "金瞳", "冷娇", "银发", "猫娘", "萝莉", "裸足", "[MASK]"],
-        ["银发", "萝莉", "光环", "步枪", "[MASK]"]
+        ["银发", "萝莉", "光环", "步枪", "[MASK]"],
+        ["巨乳", "御姐", "分离袖子", "渐变色发", "过膝靴", "手套", "紫瞳", "金发", "[MASK]"],
+        ["金发", "御姐", "红发", "腹黑", "颜艺", "褐色皮肤", "蓝瞳", "[MASK]"],
+        ["扶她", "[MASK]"]
     ]
 
     # 获取预测结果（结构为List[List[List[Dict]]]）
@@ -83,3 +89,35 @@ def test_tag_transformer_occlusion():
             print(f"  Combination {combo}:")
             for pos, impact_value in impact_at_positions.items():
                 print(f"    Position {pos} ('{(['[CLS]'] + input_for_occlusion)[pos]}'): Impact = {impact_value:.4f}")
+
+
+def test_tag_transformer_embedding_distance():
+    """标签嵌入距离测试"""
+
+    model_datas = torch.load(cfg.test.model_tag_transformer_path)
+    vocab = model_datas['vocab']
+    model = TagTransformer(len(vocab))
+    model.load_state_dict(model_datas['model_state_dict'])
+    model.eval()
+
+    emb_disor = TagTransformerEmbeddingDistance(model=model, vocab=vocab)
+
+    tags = list(vocab.keys())
+
+    # 计算标签嵌入距离
+    embedding_distance = emb_disor.compute_embedding_distance(tags)
+
+    # 直方图
+    plt.figure(figsize=(10, 6))
+    plt.hist(embedding_distance.values(), bins=20, alpha=0.7)
+    plt.title('Tag Embedding Distance Distribution')
+    plt.xlabel('Distance')
+    plt.ylabel('Frequency')
+    plt.grid()
+    
+    plt.savefig(f"{cfg.test.emb_dist_output_dir}/tag_embedding_distance_distribution.png")
+    plt.show()
+
+    # 保存距离信息
+    with open(f"{cfg.test.emb_dist_output_dir}/tag_embedding_distance.pkl", "wb") as f:
+        pickle.dump(embedding_distance, f, protocol=pickle.HIGHEST_PROTOCOL)

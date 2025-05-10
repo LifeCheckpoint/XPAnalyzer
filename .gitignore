@@ -12,5 +12,7 @@ wheels/
 # pytest
 .pytest_cache/
 
+.VSCodeCounter/
+
 # saves_model
 saves/
