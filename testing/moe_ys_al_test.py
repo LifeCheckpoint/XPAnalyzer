@@ -22,4 +22,9 @@ def test_moe_ys_al_xpmark():
     i = 0
     for tag, score in sorted_marks[:50]:
         i += 1
-        print(f"{i}. Tag: {tag}, Score: {score:.4f}")
+        print(f"Top {i}. Tag: {tag}, Score: {score:.4f}")
+    sorted_marks.reverse()
+    i = 0
+    for tag, score in sorted_marks[:50]:
+        i += 1
+        print(f"Bottom {i}. Tag: {tag}, Score: {score:.4f}")

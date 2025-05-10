@@ -56,8 +56,9 @@ class TestConfig(BaseInfoConfig):
 
 class MarkerConfig(BaseInfoConfig):
     # 打分配置参数
-    distance_transform_power: float = 0.8
-    pre_weights_transform_power: float = 0.01
+    distance_transform_scale: float = 0.5
+    distance_transform_power: float = 0.2 # 越低越拉开差距，越高越容易共同带上相关标签
+    pre_weights_transform_power: float = 0 # 越低越接近原始值，越高相对差距越大
 
 class ExperimentConfig(BaseInfoConfig):
     # 实验配置参数

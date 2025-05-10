@@ -41,9 +41,6 @@ def read_tags_from_moe_ys_al(moe_ys_al_state_path: str = cfg.dataset.moe_ys_al_s
     std_score = (sum((x - mean_score) ** 2 for x in scores) / len(scores)) ** 0.5
     for item in result:
         item["score"] = (item["score"] - mean_score) / std_score
-    min_score = min([item["score"] for item in result])
-    for item in result:
-        item["score"] = item["score"] + abs(min_score)
-    print(result[0:10])
+    print(result[0:5])
 
     return result

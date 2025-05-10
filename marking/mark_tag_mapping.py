@@ -87,21 +87,33 @@ class TagMarker:
             for mark in marks:
                 if tag in mark["tags"]:
                     mark["tags"].remove(tag)
+
+        # 基础得分
+        # 测试组（有该Tag的角色）的平均评分 avg1
+        # 对照组（无该Tag的角色）的平均评分 avg2
+        # 差异 delta = avg1 - avg2
+        for tag in self.tags:
+            test_group = [mark["score"] for mark in marks if tag in mark["tags"]]
+            control_group = [mark["score"] for mark in marks if tag not in mark["tags"]]
+            if len(test_group) == 0 or len(control_group) == 0:
+                continue
+            avg_test = sum(test_group) / len(test_group)
+            avg_control = sum(control_group) / len(control_group)
+            delta = avg_test - avg_control
+            final_scores[tag] = delta * 10
         
         for mark in marks:
             if mark["score"] == None:
                 continue
 
             # 计算当前标签组对所有标签的贡献
-            group_impact = self._compute_group_impact(mark["tags"], mark["score"])
-            
-            # 累加
-            for tag, score in group_impact.items():
-                final_scores[tag] += score
+            group_impact = self._compute_group_impact(mark["tags"])
+            for tag, impact in group_impact.items():
+                final_scores[tag] += impact * mark["score"] * cfg.mark.distance_transform_scale
 
         # 置信度因子
         # n_test 为具有该 tag 的组数，n_control 为没有该 tag 的组数
-        countFactor = lambda n_test, n_control: min(1.2, max(0, np.log((n_test * n_control) / (n_test + n_control) / 2 + 1) - 0.7))
+        countFactor = lambda n_test, n_control: min(1.8, max(0, np.log((n_test * n_control) / (n_test + n_control) / 2 + 1) - 0.7))
         for tag in final_scores:
             n_test = sum(1 for mark in marks if tag in mark["tags"])
             n_control = len(marks) - n_test
@@ -114,7 +126,7 @@ class TagMarker:
         
         return final_scores
 
-    def _compute_group_impact(self, group_tags: List[str], group_score: float) -> Dict[str, float]:
+    def _compute_group_impact(self, group_tags: List[str]) -> Dict[str, float]:
         """计算单个标签组的影响"""
         impact = {}
         for target_tag in self.tags:
@@ -126,5 +138,5 @@ class TagMarker:
                     float(self.max_distance)  # 如果不存在
                 )
                 total += self._normalize_distance(distance)
-            impact[target_tag] = total
+            impact[target_tag] = total / len(group_tags)
         return impact
