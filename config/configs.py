@@ -7,4 +7,5 @@ DatasetConfig = current_config.DatasetConfig
 TrainConfig = current_config.TrainConfig
 EvaluateConfig = current_config.EvaluateConfig
 TestConfig = current_config.TestConfig
+MarkerConfig = current_config.MarkerConfig
 ExperimentConfig = current_config.ExperimentConfig

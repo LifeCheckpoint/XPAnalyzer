@@ -105,7 +105,21 @@ def test_tag_transformer_embedding_distance():
     tags = list(vocab.keys())
 
     # 计算标签嵌入距离
-    embedding_distance = emb_disor.compute_embedding_distance(tags)
+    embedding_distance, embedding_dict = emb_disor.compute_embedding_distance(tags)
+    torch.save(embedding_dict, f"{cfg.test.emb_dist_output_dir}/tag_embedding_dict.pt")
+
+    # 保存距离信息
+    with open(f"{cfg.test.emb_dist_output_dir}/tag_embedding_distance.pkl", "wb") as f:
+        pickle.dump(embedding_distance, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+    # 输出距离信息
+    eps = 1e-1
+    print("N:", len(embedding_distance))
+    print("AVG:", sum(embedding_distance.values()) / len(embedding_distance))
+    print("AVG (without zero):", sum([v for v in embedding_distance.values() if v > eps]) / len([v for v in embedding_distance.values() if v > eps]))
+    print("MAX:", max(embedding_distance.values()))
+    print("MIN (without zero):", min([v for v in embedding_distance.values() if v > eps]))
+    print("Distance info saved to:", f"{cfg.test.emb_dist_output_dir}/tag_embedding_distance.pkl")
 
     # 直方图
     plt.figure(figsize=(10, 6))
@@ -114,10 +128,5 @@ def test_tag_transformer_embedding_distance():
     plt.xlabel('Distance')
     plt.ylabel('Frequency')
     plt.grid()
-    
     plt.savefig(f"{cfg.test.emb_dist_output_dir}/tag_embedding_distance_distribution.png")
     plt.show()
-
-    # 保存距离信息
-    with open(f"{cfg.test.emb_dist_output_dir}/tag_embedding_distance.pkl", "wb") as f:
-        pickle.dump(embedding_distance, f, protocol=pickle.HIGHEST_PROTOCOL)

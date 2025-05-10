@@ -5,6 +5,7 @@ class BaseInfoConfig(BaseModel):
     experiment_name: str = "20250510a"
     seed: int = 114514
     device: str = "cuda"
+    eps: float = 0.1
 
 class ModelConfig(BaseInfoConfig):
     # 模型配置参数
@@ -16,8 +17,12 @@ class ModelConfig(BaseInfoConfig):
 
 class DatasetConfig(BaseInfoConfig):
     # 数据集配置参数
-    characters_tags_dataset_path: str = "E:/Dataset/bangumi/data_min.json"
+    characters_tags_dataset_path: str = "./datasets/data_min.json"
     tag_freq_threshold: int = 3
+    tags_weights_dataset_path: str = "./datasets/tag_weights.json"
+    moe_ys_al_state_path: str = "./saves/state.json"
+    embedding_saving_path: str = f"./saves/{BaseInfoConfig().experiment_name}/tag_embedding_dict.pt"
+    tags_embedding_distance_pickle_path: str = f"./saves/{BaseInfoConfig().experiment_name}/tag_embedding_distance.pkl"
 
 class TrainConfig(BaseInfoConfig):
     # 训练配置参数
@@ -49,6 +54,11 @@ class TestConfig(BaseInfoConfig):
     tsne_image_output_dir: str = f"./saves/{BaseInfoConfig().experiment_name}"
     emb_dist_output_dir: str = f"./saves/{BaseInfoConfig().experiment_name}"
 
+class MarkerConfig(BaseInfoConfig):
+    # 打分配置参数
+    distance_transform_power: float = 0.8
+    pre_weights_transform_power: float = 0.01
+
 class ExperimentConfig(BaseInfoConfig):
     # 实验配置参数
     model: ModelConfig = ModelConfig()
@@ -56,6 +66,7 @@ class ExperimentConfig(BaseInfoConfig):
     train: TrainConfig = TrainConfig()
     evaluate: EvaluateConfig = EvaluateConfig()
     test: TestConfig = TestConfig()
+    mark: MarkerConfig = MarkerConfig()
 
 """
 Epoch 150 Train Loss: Critetion = 0.7114, Contrastive = 0.1167
